@@ -848,10 +848,178 @@ footer {
   .orders-modal-header { padding:20px; }
   .user-dropdown { right:-20px; }
 }
+
+/* ===== FULL-PAGE LOGIN SCREEN ===== */
+.login-screen {
+  position:fixed; inset:0; z-index:9999;
+  background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display:flex; align-items:center; justify-content:center;
+  padding:20px;
+  transition:opacity 0.5s ease, visibility 0.5s ease;
+}
+.login-screen.hidden {
+  opacity:0; visibility:hidden; pointer-events:none;
+}
+.login-screen-inner {
+  width:100%; max-width:460px;
+}
+.login-screen-brand {
+  text-align:center; margin-bottom:36px;
+}
+.login-screen-brand .brand-icon {
+  width:80px; height:80px; border-radius:50%;
+  background:rgba(201,168,76,0.15); border:2px solid var(--accent);
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 20px; font-size:36px; color:var(--accent);
+}
+.login-screen-brand h1 {
+  font-family:'Playfair Display',serif;
+  font-size:36px; font-weight:700; color:var(--white);
+  margin-bottom:8px;
+}
+.login-screen-brand h1 span { color:var(--accent); }
+.login-screen-brand p {
+  color:rgba(255,255,255,0.6); font-size:15px;
+}
+.login-screen-card {
+  background:var(--white);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,0.4);
+}
+.login-screen-tabs {
+  display:flex; border-bottom:2px solid #eee;
+}
+.login-screen-tab {
+  flex:1; padding:16px; text-align:center;
+  font-size:15px; font-weight:600; cursor:pointer;
+  background:none; border:none; color:var(--text-light);
+  transition:var(--transition); font-family:'Poppins',sans-serif;
+  border-bottom:3px solid transparent; margin-bottom:-2px;
+}
+.login-screen-tab.active {
+  color:var(--accent); border-bottom-color:var(--accent);
+}
+.login-screen-tab:hover { color:var(--accent); }
+.login-screen-form {
+  padding:32px;
+  display:none; flex-direction:column; gap:18px;
+}
+.login-screen-form.active {
+  display:flex; flex-direction:column; gap:18px;
+}
+.login-screen-form .form-group { display:flex; flex-direction:column; gap:6px; }
+.login-screen-form .form-group label {
+  font-size:13px; font-weight:600; color:var(--primary);
+}
+.login-screen-form .form-group input {
+  padding:13px 18px; border:2px solid #e8e8e8;
+  border-radius:10px; font-size:14px;
+  font-family:'Poppins',sans-serif;
+  transition:var(--transition); outline:none; width:100%;
+}
+.login-screen-form .form-group input:focus { border-color:var(--accent); }
+.login-screen-submit {
+  width:100%; padding:15px;
+  background:var(--accent); color:var(--primary);
+  border:none; border-radius:50px;
+  font-size:15px; font-weight:700; cursor:pointer;
+  transition:var(--transition); font-family:'Poppins',sans-serif;
+  margin-top:6px;
+}
+.login-screen-submit:hover { background:var(--accent-dark); }
+.login-screen-error {
+  background:#fef0f0; color:#e74c3c;
+  padding:10px 16px; border-radius:8px;
+  font-size:13px; display:none; text-align:center;
+}
+.login-screen-error.active { display:block; }
+.login-screen-footer {
+  text-align:center; padding:0 32px 28px;
+  color:var(--text-light); font-size:13px;
+}
+.login-screen-footer a {
+  color:var(--accent); font-weight:600; cursor:pointer;
+}
+.login-screen-footer a:hover { text-decoration:underline; }
+.login-screen-guest {
+  text-align:center; margin-top:24px;
+}
+.login-screen-guest p {
+  color:rgba(255,255,255,0.5); font-size:13px;
+}
+
+/* Orders nav link */
+.nav-orders-link {
+  cursor:pointer;
+  display:none;
+}
+.nav-orders-link.visible { display:inline; }
+
+@media(max-width:768px) {
+  .login-screen-brand h1 { font-size:28px; }
+  .login-screen-brand .brand-icon { width:64px; height:64px; font-size:28px; }
+  .login-screen-form { padding:24px; }
+  .login-screen-footer { padding:0 24px 20px; }
+}
 </style>
 </head>
 
 <body>
+
+<!-- FULL-PAGE LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-screen-inner">
+    <div class="login-screen-brand">
+      <div class="brand-icon"><i class="fas fa-tshirt"></i></div>
+      <h1>Apna <span>Mens Wear</span></h1>
+      <p>Premium Men's Fashion - Bhawarkua, Indore</p>
+    </div>
+    <div class="login-screen-card">
+      <div class="login-screen-tabs">
+        <button class="login-screen-tab active" id="lsLoginTab" onclick="switchLoginScreenTab('login')">Login</button>
+        <button class="login-screen-tab" id="lsRegisterTab" onclick="switchLoginScreenTab('register')">Register</button>
+      </div>
+      <!-- Login Form -->
+      <div class="login-screen-form active" id="lsLoginForm">
+        <div class="login-screen-error" id="lsLoginError"></div>
+        <div class="form-group">
+          <label>Mobile Number</label>
+          <input type="tel" id="lsLoginMobile" placeholder="Enter 10-digit mobile number" maxlength="10">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="lsLoginPassword" placeholder="Enter your password">
+        </div>
+        <button class="login-screen-submit" onclick="loginFromScreen()"><i class="fas fa-sign-in-alt"></i>&nbsp; Login</button>
+      </div>
+      <!-- Register Form -->
+      <div class="login-screen-form" id="lsRegisterForm">
+        <div class="login-screen-error" id="lsRegisterError"></div>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="lsRegName" placeholder="Enter your full name">
+        </div>
+        <div class="form-group">
+          <label>Mobile Number</label>
+          <input type="tel" id="lsRegMobile" placeholder="Enter 10-digit mobile number" maxlength="10">
+        </div>
+        <div class="form-group">
+          <label>Email <span style="color:var(--text-light);font-weight:400;">(optional)</span></label>
+          <input type="email" id="lsRegEmail" placeholder="Enter your email">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="lsRegPassword" placeholder="Create a password (min 4 chars)">
+        </div>
+        <button class="login-screen-submit" onclick="registerFromScreen()"><i class="fas fa-user-plus"></i>&nbsp; Create Account</button>
+      </div>
+      <div class="login-screen-footer">
+        <span id="lsFooterText">Don't have an account? <a onclick="switchLoginScreenTab('register')">Register here</a></span>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- HEADER -->
 <header>
@@ -861,6 +1029,7 @@ footer {
     <a href="#products">Shop</a>
     <a href="#features">Why Us</a>
     <a href="#store">Visit Store</a>
+    <a href="javascript:void(0)" class="nav-orders-link" id="navOrdersLink" onclick="openOrderHistory(event)">My Orders</a>
   </nav>  <div class="header-actions">
     <div class="cart-icon" id="cartToggle" onclick="toggleCart()">
       <i class="fas fa-shopping-bag"></i>
@@ -1708,7 +1877,9 @@ function logoutUser(e) {
   localStorage.removeItem('amw_session');
   updateUserUI();
   document.getElementById('userDropdown').classList.remove('active');
-  showToast('Logged out successfully');
+  cart = [];
+  updateCartUI();
+  showLoginScreen();
 }
 
 // ===== SAVE ORDER =====
@@ -1780,6 +1951,112 @@ function closeOrderHistory() {
 // ===== INIT =====
 loadUserSession();
 renderProducts();
+
+// ===== LOGIN SCREEN =====
+function switchLoginScreenTab(tab) {
+  const loginTab = document.getElementById('lsLoginTab');
+  const registerTab = document.getElementById('lsRegisterTab');
+  const loginForm = document.getElementById('lsLoginForm');
+  const registerForm = document.getElementById('lsRegisterForm');
+  const footerText = document.getElementById('lsFooterText');
+
+  document.getElementById('lsLoginError').classList.remove('active');
+  document.getElementById('lsRegisterError').classList.remove('active');
+
+  if (tab === 'login') {
+    loginTab.classList.add('active');
+    registerTab.classList.remove('active');
+    loginForm.classList.add('active');
+    registerForm.classList.remove('active');
+    footerText.innerHTML = 'Don\'t have an account? <a onclick="switchLoginScreenTab(\'register\')">Register here</a>';
+  } else {
+    loginTab.classList.remove('active');
+    registerTab.classList.add('active');
+    loginForm.classList.remove('active');
+    registerForm.classList.add('active');
+    footerText.innerHTML = 'Already have an account? <a onclick="switchLoginScreenTab(\'login\')">Login here</a>';
+  }
+}
+
+function showLoginScreenError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.add('active');
+}
+
+function loginFromScreen() {
+  document.getElementById('lsLoginError').classList.remove('active');
+  const mobile = document.getElementById('lsLoginMobile').value.trim();
+  const password = document.getElementById('lsLoginPassword').value;
+
+  if (!mobile || !/^\d{10}$/.test(mobile)) return showLoginScreenError('lsLoginError', 'Please enter a valid 10-digit mobile number');
+  if (!password) return showLoginScreenError('lsLoginError', 'Please enter your password');
+
+  const users = JSON.parse(localStorage.getItem('amw_users') || '[]');
+  const user = users.find(u => u.mobile === mobile && u.password === password);
+
+  if (!user) {
+    return showLoginScreenError('lsLoginError', 'Invalid mobile number or password');
+  }
+
+  currentUser = { name: user.name, mobile: user.mobile, email: user.email };
+  localStorage.setItem('amw_session', JSON.stringify(currentUser));
+  updateUserUI();
+  hideLoginScreen();
+  showToast('Welcome back, ' + user.name + '!');
+}
+
+function registerFromScreen() {
+  document.getElementById('lsRegisterError').classList.remove('active');
+  const name = document.getElementById('lsRegName').value.trim();
+  const mobile = document.getElementById('lsRegMobile').value.trim();
+  const email = document.getElementById('lsRegEmail').value.trim();
+  const password = document.getElementById('lsRegPassword').value;
+
+  if (!name) return showLoginScreenError('lsRegisterError', 'Please enter your name');
+  if (!mobile || !/^\d{10}$/.test(mobile)) return showLoginScreenError('lsRegisterError', 'Please enter a valid 10-digit mobile number');
+  if (password.length < 4) return showLoginScreenError('lsRegisterError', 'Password must be at least 4 characters');
+
+  const users = JSON.parse(localStorage.getItem('amw_users') || '[]');
+  if (users.find(u => u.mobile === mobile)) {
+    return showLoginScreenError('lsRegisterError', 'This mobile number is already registered. Please login.');
+  }
+
+  const user = { name, mobile, email, password, createdAt: new Date().toISOString() };
+  users.push(user);
+  localStorage.setItem('amw_users', JSON.stringify(users));
+
+  currentUser = { name, mobile, email };
+  localStorage.setItem('amw_session', JSON.stringify(currentUser));
+  updateUserUI();
+  hideLoginScreen();
+  showToast('Welcome, ' + name + '! Account created successfully.');
+}
+
+function hideLoginScreen() {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('navOrdersLink').classList.add('visible');
+}
+
+function showLoginScreen() {
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('navOrdersLink').classList.remove('visible');
+  // Clear login screen forms
+  document.getElementById('lsLoginMobile').value = '';
+  document.getElementById('lsLoginPassword').value = '';
+  document.getElementById('lsRegName').value = '';
+  document.getElementById('lsRegMobile').value = '';
+  document.getElementById('lsRegEmail').value = '';
+  document.getElementById('lsRegPassword').value = '';
+  document.getElementById('lsLoginError').classList.remove('active');
+  document.getElementById('lsRegisterError').classList.remove('active');
+  switchLoginScreenTab('login');
+}
+
+// Check on load if user is already logged in
+if (currentUser) {
+  hideLoginScreen();
+}
 </script>
 
 </body>
